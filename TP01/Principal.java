@@ -8,12 +8,8 @@ class Principal {
     new File("dados/livros.hash_d.db").delete();
     new File("dados/livros.hash_c.db").delete();
 
-    try {
-      new File("dados").createNewFile();
-      new File("dados/deletedIndices").createNewFile();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    new File("dados").mkdir();
+    new File("dados/deletedIndices").mkdir();
 
     Arquivo<Livro> arqLivros;
     Livro l1 = new Livro(-1, "9788563560278", "Odisseia", 15.99F);
