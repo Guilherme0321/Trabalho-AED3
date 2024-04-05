@@ -8,7 +8,6 @@ conter.
 Implementado pelo Prof. Marcos Kutova
 v1.1 - 2021
 */
-package aeds3;
 
 import java.io.IOException;
 
