@@ -73,7 +73,7 @@ public class Arquivo<T extends Registro> {
 
   private void createIndexDeleted(int id, short len, long position) throws Exception {
     DeletedIndexRegister indexRegisterDeleted = new DeletedIndexRegister(); // instanciando a classe
-    indexRegisterDeleted.setID(id);
+    //indexRegisterDeleted.setID(id);
     indexRegisterDeleted.setLength(len);
     indexRegisterDeleted.setPosition(position);
     
