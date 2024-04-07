@@ -1,19 +1,52 @@
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
-import java.lang.reflect.Constructor;
 
-public class Deleted <T extends RegistroHashExtensivel> {
+public class Deleted {
     RandomAccessFile file;
-    Constructor<T> constructor;
 
-    @SuppressWarnings("unchecked")
-    public Deleted(Constructor constructor, String name) {
-        this.constructor = constructor;
+    public Deleted(String name) {
         try {
             this.file = new RandomAccessFile(name, "rw");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean create(DeletedIndexRegister elem) {
+        try {
+            file.seek(file.length());
+            file.write(' ');
+            byte[] tam  = elem.toByteArray();
+            file.writeShort(tam.length);
+            file.write(elem.toByteArray());
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public long read(short len) {
+        try {
+            file.seek(0);
+            while (file.getFilePointer() < file.length()) {
+                char lapide = (char) file.read();
+                short byteArrayLength = file.readShort();
+                if(lapide != '*') {
+                    byte[] bytes = new byte[byteArrayLength];
+                    file.read(bytes);
+                    DeletedIndexRegister indiceDeletado = new DeletedIndexRegister();
+                    indiceDeletado.fromByteArray(bytes);
+                    //System.out.println(indiceDeletado);
+                    if(len <= indiceDeletado.getLength()) return indiceDeletado.getPosition();
+                } else {
+                    file.skipBytes(byteArrayLength);
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
 }
