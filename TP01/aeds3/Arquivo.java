@@ -31,7 +31,7 @@ public class Arquivo<T extends Registro> {
         3,
         "dados/" + na + ".hash_d.db",
         "dados/" + na + ".hash_c.db");
-    deletedIndex = new HashExtensivel<>(DeletedIndexRegister.class.getConstructor(), 3, "dados/deletedIndices/hash_e.db", "dados/deletedIndices/hash_f.db");
+    //deletedIndex = new HashExtensivel<>(DeletedIndexRegister.class.getConstructor(), 3, "dados/deletedIndices/hash_e.db", "dados/deletedIndices/hash_f.db");
   }
 
   public int create(T obj) throws Exception {
@@ -46,6 +46,12 @@ public class Arquivo<T extends Registro> {
     long endereco = arquivo.getFilePointer();
     byte[] ba = obj.toByteArray();
     short tam = (short) ba.length;
+
+    Deleted deletados = new Deleted("deletados.db");
+    long i = deletados.read(tam);
+    System.out.println("\n\nPosição: " + i);
+
+
     arquivo.writeByte(' '); // lápide
     arquivo.writeShort(tam);
     arquivo.write(ba);
@@ -71,14 +77,14 @@ public class Arquivo<T extends Registro> {
     return null;
   }
 
-  private void createIndexDeleted(int id, short len, long position) throws Exception {
+/*   private void createIndexDeleted(int id, short len, long position) throws Exception {
     DeletedIndexRegister indexRegisterDeleted = new DeletedIndexRegister(); // instanciando a classe
     //indexRegisterDeleted.setID(id);
     indexRegisterDeleted.setLength(len);
     indexRegisterDeleted.setPosition(position);
     
     deletedIndex.create(indexRegisterDeleted); // criando uma hash para o arquivo q foi deletado
-  }
+  } */
 
   public boolean delete(int id) throws Exception {
     ParIDEndereco pie = indiceDireto.read(id);
@@ -87,10 +93,17 @@ public class Arquivo<T extends Registro> {
       arquivo.seek(endereco);
       arquivo.writeByte('*');
 
-      short len = arquivo.readShort(); // lendo o tamanho do registro para salvar na hash
+      Deleted deletados = new Deleted("deletados.db");
+      DeletedIndexRegister indices = new DeletedIndexRegister();
+      short length = arquivo.readShort();
+      indices.setLength(length);
+      indices.setPosition(endereco+3);
+      deletados.create(indices);
+
+      /* short len = arquivo.readShort(); // lendo o tamanho do registro para salvar na hash
 
       createIndexDeleted(id, len, endereco);
-
+      */
       arquivo.seek(endereco+1); // volta para a posição de antes de pegar o tamanho do registro
       indiceDireto.delete(id);
       return true;
@@ -120,7 +133,7 @@ public class Arquivo<T extends Registro> {
         arquivo.seek(endereco);
         arquivo.writeByte('*');
 
-        createIndexDeleted(novoObj.getID(), tam, endereco); // adiciona o arquivo ao indece de deletados
+        //createIndexDeleted(novoObj.getID(), tam, endereco); // adiciona o arquivo ao indece de deletados
 
         arquivo.seek(arquivo.length());
         long endereco2 = arquivo.getFilePointer();
