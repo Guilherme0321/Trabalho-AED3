@@ -8,8 +8,10 @@ class Principal {
     new File("dados/livros.hash_d.db").delete();
     new File("dados/livros.hash_c.db").delete();
 
+    new File("deletados.db").delete();
+
     new File("dados").mkdir();
-    new File("dados/deletedIndices").mkdir();
+    // new File("dados/deletedIndices").mkdir();
 
     Arquivo<Livro> arqLivros;
     Livro l1 = new Livro(-1, "9788563560278", "Odisseia", 15.99F);
@@ -34,21 +36,22 @@ class Principal {
       id4 = arqLivros.create(l4);
       System.out.println("Livro criado com o ID: " + id4);
 
-      id5 = arqLivros.create(l5);
-      System.out.println("Livro criado com o ID: " + id5);
+
 
       if (arqLivros.delete(id2))
         System.out.println("Livro de ID " + id2 + " excluído!");
       else
         System.out.println("Livro de ID " + id2 + " não encontrado!");
 
+      id5 = arqLivros.create(l5);
+      System.out.println("Livro criado com o ID: " + id5);
+
       l4.setTitulo("A Memória");
       if (arqLivros.update(l4))
         System.out.println("Livro de ID " + l4.getID() + " alterado!");
       else
         System.out.println("Livro de ID " + l4.getID() + " não encontrado!");
-
-
+    
       System.out.println("\nLivro 3:\n" + arqLivros.read(3));
       System.out.println("\nLivro 1:\n" + arqLivros.read(1));
       System.out.println("\nLivro 5:\n" + arqLivros.read(5));
