@@ -50,6 +50,7 @@ public class Arquivo<T extends Registro> {
     Deleted deletados = new Deleted("deletados.db");
     long i = deletados.read(tam);
     if(i != -1) {
+      endereco = i;
       arquivo.seek(i);
     }
 
@@ -59,7 +60,9 @@ public class Arquivo<T extends Registro> {
     arquivo.writeByte(' '); // lápide
     arquivo.writeShort(tam);
     arquivo.write(ba);
+
     indiceDireto.create(new ParIDEndereco(obj.getID(), endereco));
+
     return obj.getID();
   }
 
@@ -101,7 +104,7 @@ public class Arquivo<T extends Registro> {
       DeletedIndexRegister indices = new DeletedIndexRegister();
       short length = arquivo.readShort();
       indices.setLength(length);
-      indices.setPosition(endereco+3);
+      indices.setPosition(endereco);
       deletados.create(indices);
 
       /* short len = arquivo.readShort(); // lendo o tamanho do registro para salvar na hash
@@ -140,19 +143,19 @@ public class Arquivo<T extends Registro> {
         Deleted deletados = new Deleted("deletados.db");
             DeletedIndexRegister indices = new DeletedIndexRegister();
             indices.setLength(tam2);
-            indices.setPosition(endereco+3); // 3 bytes de lápide e tamanho
+            indices.setPosition(endereco); // 3 bytes de lápide e tamanho
             deletados.create(indices);
 
             arquivo.seek(arquivo.length());
             long endereco2 = arquivo.getFilePointer();
 
-            long i = deletados.read(tam2);
+/*             long i = deletados.read(tam2);
 
             if(i != -1) {
               arquivo.seek(i);
             } else {
               arquivo.seek(arquivo.length());
-            }
+            } */
 
             arquivo.writeByte(' ');
             arquivo.writeShort(tam2);
