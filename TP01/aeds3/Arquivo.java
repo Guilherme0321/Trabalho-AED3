@@ -49,6 +49,10 @@ public class Arquivo<T extends Registro> {
 
     Deleted deletados = new Deleted("deletados.db");
     long i = deletados.read(tam);
+    if(i != -1) {
+      arquivo.seek(i);
+    }
+
     System.out.println("\n\nPosição: " + i);
 
 
@@ -135,12 +139,21 @@ public class Arquivo<T extends Registro> {
         
         Deleted deletados = new Deleted("deletados.db");
             DeletedIndexRegister indices = new DeletedIndexRegister();
-            indices.setLength(tam);
-            indices.setPosition(endereco + 3); // 3 bytes de lápide e tamanho
+            indices.setLength(tam2);
+            indices.setPosition(endereco+3); // 3 bytes de lápide e tamanho
             deletados.create(indices);
 
             arquivo.seek(arquivo.length());
             long endereco2 = arquivo.getFilePointer();
+
+            long i = deletados.read(tam2);
+
+            if(i != -1) {
+              arquivo.seek(i);
+            } else {
+              arquivo.seek(arquivo.length());
+            }
+
             arquivo.writeByte(' ');
             arquivo.writeShort(tam2);
             arquivo.write(ba2);
