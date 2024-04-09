@@ -43,6 +43,11 @@ class Principal {
       else
         System.out.println("Livro de ID " + id2 + " não encontrado!");
 
+        if (arqLivros.delete(id3))
+        System.out.println("Livro de ID " + id2 + " excluído!");
+      else
+        System.out.println("Livro de ID " + id2 + " não encontrado!");
+
       id5 = arqLivros.create(l5);
       System.out.println("Livro criado com o ID: " + id5);
 

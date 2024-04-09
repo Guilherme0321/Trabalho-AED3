@@ -132,15 +132,19 @@ public class Arquivo<T extends Registro> {
       } else {
         arquivo.seek(endereco);
         arquivo.writeByte('*');
+        
+        Deleted deletados = new Deleted("deletados.db");
+            DeletedIndexRegister indices = new DeletedIndexRegister();
+            indices.setLength(tam);
+            indices.setPosition(endereco + 3); // 3 bytes de lápide e tamanho
+            deletados.create(indices);
 
-        //createIndexDeleted(novoObj.getID(), tam, endereco); // adiciona o arquivo ao indece de deletados
-
-        arquivo.seek(arquivo.length());
-        long endereco2 = arquivo.getFilePointer();
-        arquivo.writeByte(' ');
-        arquivo.writeShort(tam2);
-        arquivo.write(ba2);
-        indiceDireto.update(new ParIDEndereco(novoObj.getID(), endereco2));
+            arquivo.seek(arquivo.length());
+            long endereco2 = arquivo.getFilePointer();
+            arquivo.writeByte(' ');
+            arquivo.writeShort(tam2);
+            arquivo.write(ba2);
+            indiceDireto.update(new ParIDEndereco(novoObj.getID(), endereco2));
       }
       return true;
     }
