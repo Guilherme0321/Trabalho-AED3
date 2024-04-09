@@ -30,6 +30,7 @@ public class Deleted {
         try {
             file.seek(0);
             while (file.getFilePointer() < file.length()) {
+                long endereco = file.getFilePointer();
                 char lapide = (char) file.read();
                 short byteArrayLength = file.readShort();
                 if(lapide != '*') {
@@ -38,7 +39,11 @@ public class Deleted {
                     DeletedIndexRegister indiceDeletado = new DeletedIndexRegister();
                     indiceDeletado.fromByteArray(bytes);
                     //System.out.println(indiceDeletado);
-                    if(len <= indiceDeletado.getLength()) return indiceDeletado.getPosition();
+                    if(len <= indiceDeletado.getLength()) {
+                        file.seek(endereco);
+                        file.write('*');
+                        return indiceDeletado.getPosition();
+                    }
                 } else {
                     file.skipBytes(byteArrayLength);
                 }
