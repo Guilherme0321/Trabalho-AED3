@@ -139,7 +139,7 @@ public class Arquivo<T extends Registro> {
         
         Deleted deletados = new Deleted("deletados.db");
             DeletedIndexRegister indices = new DeletedIndexRegister();
-            indices.setLength(tam2);
+            indices.setLength(tam); // o erro tava aqui <-
             indices.setPosition(endereco); // 3 bytes de lápide e tamanho
             deletados.create(indices);
 
