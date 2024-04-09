@@ -54,9 +54,6 @@ public class Arquivo<T extends Registro> {
       arquivo.seek(i);
     }
 
-    System.out.println("\n\nPosição: " + i);
-
-
     arquivo.writeByte(' '); // lápide
     arquivo.writeShort(tam);
     arquivo.write(ba);
@@ -149,13 +146,12 @@ public class Arquivo<T extends Registro> {
             arquivo.seek(arquivo.length());
             long endereco2 = arquivo.getFilePointer();
 
-/*             long i = deletados.read(tam2);
+            long i = deletados.read(tam2);
 
             if(i != -1) {
+              endereco2 = i;
               arquivo.seek(i);
-            } else {
-              arquivo.seek(arquivo.length());
-            } */
+            }
 
             arquivo.writeByte(' ');
             arquivo.writeShort(tam2);
