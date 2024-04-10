@@ -25,3 +25,23 @@ atualizamos o endereço correspondente na tabela hash.
 A operação que achamos mais dificil foi o Update. Isso se deve ao fato de que precisávamos tanto adicionar o registro atualizado, que possuía um tamanho menor do que o original, ao "deletados.db", quanto encontrar um endereço disponível para sobrescrever.
 
 Os resultados foram alcançados, conseguimos realizar o que foi especificado na descrição do trabalho. Fizemos alguns testes e em todos as ações de sobrescrita ocorreram conforme esperado e sem problemas.
+
+## CheckList
+* O que você considerou como perda aceitável para o reuso de espaços vazios, isto é, quais são os critérios para a gestão dos espaços vazios?
+  <br>Não utilizar o espaço mais adequado, e sim o primeiro a ser encontrado  
+* O código do CRUD com arquivos de tipos genéricos está funcionando corretamente?
+  <br>Sim
+* O CRUD tem um índice direto implementado com a tabela hash extensível?
+  <br>Sim
+* A operação de inclusão busca o espaço vazio mais adequado para o novo registro antes de acrescentá-lo ao fim do arquivo?
+  <br>Não, ela utiliza o primeiro espaço que possui um tamanho maior ou igual
+* A operação de alteração busca o espaço vazio mais adequado para o registro quando ele cresce de tamanho antes de acrescentá-lo ao fim do arquivo?
+  <br>Não, ela utiliza o primeiro espaço que possui um tamanho maior ou igual
+* As operações de alteração (quando for o caso) e de exclusão estão gerenciando os espaços vazios para que possam ser reaproveitados?
+  <br>Sim
+* O trabalho está funcionando corretamente?
+  <br>Sim
+* O trabalho está completo?
+  <br>Sim
+* O trabalho é original e não a cópia de um trabalho de um colega?
+  <br>Sim
