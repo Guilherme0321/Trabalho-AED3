@@ -12,12 +12,14 @@ public class DeletedIndexRegister implements RegistroHashExtensivel {
     private long position; // posição do arquivo deletado no arquivo
     final private int TAMANHO = 14; // tamanho do int(4) short(2) long(8)
 
-/*     public int getID() {
+/*     
+    public int getID() {
         return this.ID;
     }
     public void setID(int ID) {
         this.ID = ID;
     } */
+
     public short getLength() {
         return this.length;
     }
@@ -39,6 +41,7 @@ public class DeletedIndexRegister implements RegistroHashExtensivel {
     public short size() {
         return TAMANHO;
     }
+
     @Override
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -48,6 +51,7 @@ public class DeletedIndexRegister implements RegistroHashExtensivel {
         data.writeLong(position);
         return bytes.toByteArray();
     }
+    
     @Override
     public void fromByteArray(byte[] bytes) throws IOException {
         ByteArrayInputStream arrayInput = new ByteArrayInputStream(bytes);
