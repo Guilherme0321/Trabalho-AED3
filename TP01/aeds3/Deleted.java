@@ -1,9 +1,11 @@
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
+
 public class Deleted {
     RandomAccessFile file;
 
+    //Construtor
     public Deleted(String name) {
         try {
             this.file = new RandomAccessFile(name, "rw");
@@ -12,6 +14,11 @@ public class Deleted {
         }
     }
 
+    /**
+     * Função que cria o registro dentro do arquivo "deletados.db";
+     * @param elem objeto da classe DeletedIndexRegister que contém o tamanho e a posição do registro;
+     * @return retorna falso caso haja uma exception;
+     */
     public boolean create(DeletedIndexRegister elem) {
         try {
             file.seek(file.length());
@@ -26,6 +33,11 @@ public class Deleted {
         return false;
     }
 
+    /**
+     * Função que verifica se há algum espaço possivel de ser reutilizado entre os deletados;
+     * @param len tamanho do array de bytes a ser adicionado;
+     * @return posição do arquivo a ser reutilizado ou -1 caso não seja possível reutilizar algum espaço;
+     */
     public long read(short len) {
         try {
             file.seek(0);
