@@ -12,6 +12,8 @@ disciplina:
 Implementado pelo Prof. Marcos Kutova
 v1.1 - 2021
 */
+package aeds3;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -21,7 +23,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.lang.reflect.Constructor;
 
-public class HashExtensivel<T extends RegistroHashExtensivel> {
+public class HashExtensivel<T extends RegistroHashExtensivel<T>> {
 
   String nomeArquivoDiretorio;
   String nomeArquivoCestos;
@@ -278,8 +280,8 @@ public class HashExtensivel<T extends RegistroHashExtensivel> {
     nomeArquivoDiretorio = nd;
     nomeArquivoCestos = nc;
 
-    arqDiretorio = new RandomAccessFile(nomeArquivoDiretorio, "rw");
-    arqCestos = new RandomAccessFile(nomeArquivoCestos, "rw");
+    arqDiretorio = new RandomAccessFile(nomeArquivoDiretorio, "rwd");
+    arqCestos = new RandomAccessFile(nomeArquivoCestos, "rwd");
 
     // Se o diretório ou os cestos estiverem vazios, cria um novo diretório e lista
     // de cestos
@@ -300,7 +302,7 @@ public class HashExtensivel<T extends RegistroHashExtensivel> {
 
   public boolean create(T elem) throws Exception {
 
-    // Carrega todo o diretório para a memória
+    // Carrega TODO o diretório para a memória
     byte[] bd = new byte[(int) arqDiretorio.length()];
     arqDiretorio.seek(0);
     arqDiretorio.read(bd);
@@ -482,7 +484,7 @@ public class HashExtensivel<T extends RegistroHashExtensivel> {
     }
   }
 
-  public void close() throws Exception {
+  public void close() throws IOException {
     arqDiretorio.close();
     arqCestos.close();
   }

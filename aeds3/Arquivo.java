@@ -1,3 +1,5 @@
+package aeds3;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -12,83 +14,61 @@ import java.util.List;
 
 public class Arquivo<T extends Registro> {
 
+  protected static int TAM_CABECALHO = 4;
   protected RandomAccessFile arquivo;
-  protected String nomeEntidade = "";
-  protected Constructor<T> construtor;
-  final protected int TAM_CABECALHO = 4;
   protected HashExtensivel<ParIDEndereco> indiceDireto;
-  protected HashExtensivel<DeletedIndexRegister> deletedIndex; // hash de indeces dos arquivos que foram excluidos
+  private String nomeEntidade;
+  private Constructor<T> construtor;
 
   public Arquivo(String na, Constructor<T> c) throws Exception {
     this.nomeEntidade = na;
     this.construtor = c;
-    arquivo = new RandomAccessFile("dados/" + na + ".db", "rw");
+    arquivo = new RandomAccessFile("dados/" + this.nomeEntidade + ".db", "rwd");
     if (arquivo.length() < TAM_CABECALHO) {
       arquivo.seek(0);
       arquivo.writeInt(0);
     }
     indiceDireto = new HashExtensivel<>(ParIDEndereco.class.getConstructor(),
-        3,
-        "dados/" + na + ".hash_d.db",
-        "dados/" + na + ".hash_c.db");
-    //deletedIndex = new HashExtensivel<>(DeletedIndexRegister.class.getConstructor(), 3, "dados/deletedIndices/hash_e.db", "dados/deletedIndices/hash_f.db");
+        4, "dados/" + this.nomeEntidade + ".hash_d.db",
+        "dados/" + this.nomeEntidade + ".hash_c.db");
   }
 
   public int create(T obj) throws Exception {
+    int ultimoID;
     arquivo.seek(0);
-    int ultimoID = arquivo.readInt();
+    ultimoID = arquivo.readInt();
     ultimoID++;
     arquivo.seek(0);
     arquivo.writeInt(ultimoID);
     obj.setID(ultimoID);
 
+    byte[] ba = obj.toByteArray();
     arquivo.seek(arquivo.length());
     long endereco = arquivo.getFilePointer();
-    byte[] ba = obj.toByteArray();
-    short tam = (short) ba.length;
-
-    Deleted deletados = new Deleted("deletados.db");
-    long i = deletados.read(tam);
-    if(i != -1) {
-      endereco = i;
-      arquivo.seek(i);
-    }
-
-    arquivo.writeByte(' '); // lápide
-    arquivo.writeShort(tam);
+    arquivo.writeByte(' ');
+    arquivo.writeShort(ba.length);
     arquivo.write(ba);
 
-    indiceDireto.create(new ParIDEndereco(obj.getID(), endereco));
-
+    indiceDireto.create(new ParIDEndereco(ultimoID, endereco));
     return obj.getID();
   }
 
   public T read(int id) throws Exception {
     T obj = construtor.newInstance();
-    short tam;
-    byte[] ba;
+    int tam;
 
     ParIDEndereco pie = indiceDireto.read(id);
     long endereco = pie != null ? pie.getEndereco() : -1;
     if (endereco != -1) {
-      arquivo.seek(endereco + 1); // pula o lápide também
+      arquivo.seek(endereco + 1); // pulando o campo lápide
       tam = arquivo.readShort();
-      ba = new byte[tam];
+      byte[] ba = new byte[tam];
       arquivo.read(ba);
       obj.fromByteArray(ba);
       return obj;
-    }
-    return null;
+    } else
+      return null;
   }
-
-/*   private void createIndexDeleted(int id, short len, long position) throws Exception {
-    DeletedIndexRegister indexRegisterDeleted = new DeletedIndexRegister(); // instanciando a classe
-    //indexRegisterDeleted.setID(id);
-    indexRegisterDeleted.setLength(len);
-    indexRegisterDeleted.setPosition(position);
-    
-    deletedIndex.create(indexRegisterDeleted); // criando uma hash para o arquivo q foi deletado
-  } */
 
   public boolean delete(int id) throws Exception {
     ParIDEndereco pie = indiceDireto.read(id);
@@ -96,71 +76,49 @@ public class Arquivo<T extends Registro> {
     if (endereco != -1) {
       arquivo.seek(endereco);
       arquivo.writeByte('*');
-
-      Deleted deletados = new Deleted("deletados.db");
-      DeletedIndexRegister indices = new DeletedIndexRegister();
-      short length = arquivo.readShort();
-      indices.setLength(length);
-      indices.setPosition(endereco);
-      deletados.create(indices);
-
-      /* short len = arquivo.readShort(); // lendo o tamanho do registro para salvar na hash
-
-      createIndexDeleted(id, len, endereco);
-      */
-      arquivo.seek(endereco+1); // volta para a posição de antes de pegar o tamanho do registro
       indiceDireto.delete(id);
       return true;
     } else
       return false;
   }
 
-  public boolean update(T novoObj) throws Exception {
+  public boolean update(T objAtualizado) throws Exception {
     T obj = construtor.newInstance();
-    short tam, tam2;
-    byte[] ba, ba2;
-    ParIDEndereco pie = indiceDireto.read(novoObj.getID());
-    long endereco = pie != null ? pie.getEndereco() : -1;
+    int tam;
 
+    ParIDEndereco pie = indiceDireto.read(objAtualizado.getID());
+    long endereco = pie != null ? pie.getEndereco() : -1;
     if (endereco != -1) {
-      arquivo.seek(endereco + 1); // pula o campo lápide
+      // Lê o registro atual
+      arquivo.seek(endereco + 1); // pula o lápide
       tam = arquivo.readShort();
-      ba = new byte[tam];
+      byte[] ba = new byte[tam];
       arquivo.read(ba);
       obj.fromByteArray(ba);
-      ba2 = novoObj.toByteArray();
-      tam2 = (short) ba2.length;
+
+      // determina se o registro cresceu ou náo
+      byte[] ba2 = objAtualizado.toByteArray();
+      short tam2 = (short) ba2.length;
+
+      // novo registro permanece no mesmo lugar
       if (tam2 <= tam) {
         arquivo.seek(endereco + 1 + 2);
         arquivo.write(ba2);
+
+        // novo registro foi para o fim do arquivo
       } else {
         arquivo.seek(endereco);
         arquivo.writeByte('*');
-        
-        Deleted deletados = new Deleted("deletados.db");
-            DeletedIndexRegister indices = new DeletedIndexRegister();
-            indices.setLength(tam); // o erro tava aqui <-
-            indices.setPosition(endereco); // 3 bytes de lápide e tamanho
-            deletados.create(indices);
-
-            arquivo.seek(arquivo.length());
-            long endereco2 = arquivo.getFilePointer();
-
-            long i = deletados.read(tam2);
-
-            if(i != -1) {
-              endereco2 = i;
-              arquivo.seek(i);
-            }
-
-            arquivo.writeByte(' ');
-            arquivo.writeShort(tam2);
-            arquivo.write(ba2);
-            indiceDireto.update(new ParIDEndereco(novoObj.getID(), endereco2));
+        arquivo.seek(arquivo.length());
+        long novoEndereco = arquivo.getFilePointer();
+        arquivo.writeByte(' ');
+        arquivo.writeShort(tam2);
+        arquivo.write(ba2);
+        indiceDireto.update(new ParIDEndereco(objAtualizado.getID(), novoEndereco));
       }
       return true;
-    }
-    return false;
+    } else
+      return false;
   }
 
   public void close() throws Exception {
@@ -173,16 +131,15 @@ public class Arquivo<T extends Registro> {
   @SuppressWarnings("unchecked")
   public void reorganizar() throws Exception {
 
-    int tamanhoBlocoMemoria = 3;
-
     // Lê o cabeçalho
-    arquivo.seek(0);
     byte[] ba_cabecalho = new byte[TAM_CABECALHO];
+    arquivo.seek(0);
     arquivo.read(ba_cabecalho);
 
     // ---------------------------------------------------------------------
     // Primeira etapa (distribuição)
     // ---------------------------------------------------------------------
+    int tamanhoBlocoMemoria = 3;
     List<T> registrosOrdenados = new ArrayList<>();
 
     int contador = 0, seletor = 0;
@@ -257,6 +214,7 @@ public class Arquivo<T extends Registro> {
           default:
             out = out3;
         }
+
         Collections.sort(registrosOrdenados);
         for (T r : registrosOrdenados) {
           dados = r.toByteArray();
@@ -340,8 +298,7 @@ public class Arquivo<T extends Registro> {
 
         // le o próximo registro da última fonte usada
         if (mudou1) {
-          System.out.println(r1);
-          rAnt1 = (T) (r1.clone());
+          rAnt1 = (T) r1.clone();
           try {
             tamanho = in1.readShort();
             dados = new byte[tamanho];
@@ -419,26 +376,24 @@ public class Arquivo<T extends Registro> {
 
     // return;
 
-    // fecha e apaga todos os arquivos vinculados
-    arquivo.close();
-    new File("dados/" + nomeEntidade + ".db").delete();
-    new File("dados/" + nomeEntidade + ".hash_d.db").delete();
-    new File("dados/" + nomeEntidade + ".hash_c.db").delete();
-
     // copia os registros de volta para o arquivo original
     if (sentido)
       in1 = new DataInputStream(new FileInputStream("dados/temp1.db"));
     else
       in1 = new DataInputStream(new FileInputStream("dados/temp4.db"));
 
+    arquivo.close();
+    new File("dados/" + nomeEntidade + ".db").delete();
     DataOutputStream ordenado = new DataOutputStream(new FileOutputStream(nomeEntidade));
     ordenado.write(ba_cabecalho);
 
+    new File("dados/" + nomeEntidade + ".hash_d.db").delete();
+    new File("dados/" + nomeEntidade + ".hash_c.db").delete();
     indiceDireto = new HashExtensivel<>(ParIDEndereco.class.getConstructor(),
-        3,
-        "dados/" + this.nomeEntidade + ".hash_d.db",
+        4, "dados/" + this.nomeEntidade + ".hash_d.db",
         "dados/" + this.nomeEntidade + ".hash_c.db");
 
+    long endereco;
     try {
       while (true) {
         tamanho = in1.readShort();
@@ -446,7 +401,7 @@ public class Arquivo<T extends Registro> {
         in1.read(dados);
         r1.fromByteArray(dados);
 
-        long endereco = ordenado.size(); // recupera o ponteiro do arquivo.
+        endereco = ordenado.size();
         ordenado.writeByte(' '); // lápide
         ordenado.writeShort(tamanho);
         ordenado.write(dados);
@@ -463,7 +418,7 @@ public class Arquivo<T extends Registro> {
     (new File("dados/temp4.db")).delete();
     (new File("dados/temp5.db")).delete();
     (new File("dados/temp6.db")).delete();
-    arquivo = new RandomAccessFile(nomeEntidade, "rw");
+    arquivo = new RandomAccessFile("dados/" + this.nomeEntidade + ".db", "rwd");
   }
 
 }
