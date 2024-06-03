@@ -78,22 +78,9 @@ public class LZWController {
             byte[] decoded = decompressData(dirBackUp + "/" + file);
             RandomAccessFile fileOut = new RandomAccessFile(dirOut + "/" + file.substring(0, file.length()-4), "rw");
             
-            byte[] conteudo = new byte[(int) fileOut.length()];
-            fileOut.read(conteudo);
-
-            System.out.println("Original");
-            boolean y = true;
-            for(int x = 0; x < decoded.length; x++) {
-                if(decoded[x] != conteudo[x]) {
-                    System.out.println("false");
-                    y = false;
-                    x = decoded.length;
-                }
-            }
-            System.out.println(y);
-            System.out.println();
-            
-            System.out.println("\n_________________________________________-");
+            fileOut.setLength(0);
+            fileOut.write(decoded);
+                        
             fileOut.close();
         }
     }
