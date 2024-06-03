@@ -64,7 +64,7 @@ public class LZWController {
     public void decompressData(String filePath, int bytesByExecution) throws Exception {
         try {
             RandomAccessFile file = new RandomAccessFile(filePath, "rw");
-            byte[] conteudo = new byte[(int) file.length() - (int) file.getFilePointer()];
+            byte[] conteudo = new byte[(int) file.length()];
             System.out.println("\n" + filePath);
             while (file.getFilePointer() < file.length()) {
                 byte[] temp = LZW.decodifica(conteudo);
