@@ -1,3 +1,5 @@
+package lzws;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -73,7 +75,7 @@ public class LZW {
             }
 
             // acrescenta o último índice à saída
-            saida.add(ultimoIndice);
+            saida.add(indice!=-1 ? indice : ultimoIndice);
 
             // acrescenta o novo vetor de bytes ao dicionário
             if(dicionario.size() < (Math.pow(2, BITS_POR_INDICE))) {
@@ -141,14 +143,13 @@ public class LZW {
             // decodifica o próximo número
             i++;
             if(i<entrada.size()) {
+                // adiciona o vetor de bytes (+1 byte do próximo vetor) ao fim do dicionário
+                if(dicionario.size()<Math.pow(2,BITS_POR_INDICE)) 
+                    dicionario.add(vetorBytes);
+            
                 proximoVetorBytes = dicionario.get(entrada.get(i));
                 vetorBytes.add(proximoVetorBytes.get(0));
-
-                // adiciona o vetor de bytes (+1 byte do próximo vetor) ao fim do dicionário
-                if(dicionario.size()<Math.pow(2,BITS_POR_INDICE))
-                    dicionario.add(vetorBytes);
             }
-
         }
 
         byte[] msgDecodificadaBytes = new byte[msgDecodificada.size()];

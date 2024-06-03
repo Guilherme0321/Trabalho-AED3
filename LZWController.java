@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Scanner;
+
+import lzws.*;
 
 public class LZWController {
 
@@ -58,8 +61,22 @@ public class LZWController {
             readAndWrite(nome, bytesByExecution, dirOut);
         }
     }
+
+    public static void makeMenu() {
+        System.out.println("Choose a backup:");
+        String[] dirList = (new File("backup")).list();
+        for(int i = 0; i < dirList.length; i++) {
+            System.out.println("    " + i + " " + dirList[i]);
+        }
+        System.out.print("Resposta: ");
+        Scanner sc = new Scanner(System.in);
+        int res = sc.nextInt();
+        sc.close();
+    }
+
     public static void main(String[] args) throws Exception {
         LZWController controller = new LZWController("backup");
+        makeMenu();
         controller.compressData(10);
     }
 
