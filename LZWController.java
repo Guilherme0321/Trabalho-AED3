@@ -21,7 +21,7 @@ public class LZWController {
         this.dir = dir;
     }
 
-    private void readAndWrite(String nome, int bytesByExecution, String dirOut) throws Exception {
+    private void readAndWrite(String nome, String dirOut) throws Exception {
         RandomAccessFile fileInput = null, fileOutput = null;
         try {
             fileInput = new RandomAccessFile("dados/" + nome, "rw");
@@ -29,18 +29,16 @@ public class LZWController {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        byte[] temp = new byte[bytesByExecution];
+        byte[] temp = new byte[(int) fileInput.length()];
         fileInput.seek(0);
         fileOutput.seek(0);
-        while (fileInput.getFilePointer() < fileInput.length()) {
-            fileInput.read(temp);
-            try {
-                temp = LZW.codifica(temp);
-            } catch (Exception e) {
-                throw new Exception("Erro ao comprimir o conteudo de " + nome);
-            }
-            fileOutput.write(temp);
+        fileInput.read(temp);
+        try {
+            temp = LZW.codifica(temp);
+        } catch (Exception e) {
+            throw new Exception("Erro ao comprimir o conteudo de " + nome);
         }
+        fileOutput.write(temp);
         fileInput.close();
         fileOutput.close();
     }
@@ -50,52 +48,60 @@ public class LZWController {
      * @param bytesByCicle numero da quantidade de bytes que será por loop 
      * @throws Exception 
      */
-    public void compressData(int bytesByExecution) throws Exception {
+    public void compressData() throws Exception {
         String[] nomes = (new File("dados")).list();
         SimpleDateFormat simple = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
         for (String nome : nomes) {
             String dirOut = simple.format(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
             File file = new File(dir + "/" + dirOut);
             file.mkdir();
-            readAndWrite(nome, bytesByExecution, dirOut);
+            readAndWrite(nome, dirOut);
         }
     }
 
-    public void decompressData(String filePath, int bytesByExecution) throws Exception {
+    public byte[] decompressData(String filePath) throws Exception {
         try {
             RandomAccessFile file = new RandomAccessFile(filePath, "rw");
-            byte[] conteudo = new byte[bytesByExecution];
-            System.out.println("\n" + filePath);
-            while (file.getFilePointer() < file.length()) {
-                file.read(conteudo);
-                byte[] temp = LZW.decodifica(conteudo);
-                for (byte b : temp) {
-                    System.out.print(b);
-                }
-
-            }
-            System.out.println();
-            System.out.println();
+            byte[] conteudo = new byte[(int) file.length()];
+            
+            file.read(conteudo);
             file.close();
+            return LZW.decodifica(conteudo);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public void decompressData(String dirBackUp, String dirOut, int bytesByExecution) throws Exception {
         String[] files = (new File(dirBackUp)).list();
         for (String file : files) {
-            System.out.println("Arquivo descompactado");
-            decompressData(dirBackUp + "/" + file, bytesByExecution);
+            byte[] decoded = decompressData(dirBackUp + "/" + file);
             RandomAccessFile fileOut = new RandomAccessFile(dirOut + "/" + file.substring(0, file.length()-4), "rw");
             
             byte[] conteudo = new byte[(int) fileOut.length()];
             fileOut.read(conteudo);
-            System.out.println("Arquivo original");
-            for (byte b : conteudo) {
+
+            System.out.println("Original");
+/*             for(byte b : conteudo) {
                 System.out.print(b);
             }
+            System.out.println("\nDecodificado");
+            for(byte x : decoded) {
+                System.out.print(x);
+            } */
+            boolean y = true;
+            for(int x = 0; x < decoded.length; x++) {
+                if(decoded[x] != conteudo[x]) {
+                    System.out.println("false");
+                    y = false;
+                    x = decoded.length;
+                }
+            }
+            System.out.println(y);
             System.out.println();
+            
+            System.out.println("\n_________________________________________-");
             fileOut.close();
         }
     }
