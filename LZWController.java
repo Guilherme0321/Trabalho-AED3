@@ -64,10 +64,9 @@ public class LZWController {
     public void decompressData(String filePath, int bytesByExecution) throws Exception {
         try {
             RandomAccessFile file = new RandomAccessFile(filePath, "rw");
-            byte[] conteudo = new byte[bytesByExecution];
+            byte[] conteudo = new byte[(int) file.length() - (int) file.getFilePointer()];
             System.out.println("\n" + filePath);
             while (file.getFilePointer() < file.length()) {
-                file.read(conteudo);
                 byte[] temp = LZW.decodifica(conteudo);
                 for (byte b : temp) {
                     System.out.print(b);
@@ -93,7 +92,7 @@ public class LZWController {
             fileOut.read(conteudo);
             System.out.println("Arquivo original");
             for (byte b : conteudo) {
-                System.out.print(b);
+                fileOut.write(b);
             }
             System.out.println();
             fileOut.close();
