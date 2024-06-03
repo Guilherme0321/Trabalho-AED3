@@ -63,21 +63,7 @@ public class LZWController {
         try {
             RandomAccessFile file = new RandomAccessFile(filePath, "rw");
             byte[] conteudo = new byte[(int) file.length()];
-<<<<<<< HEAD
-            
             file.read(conteudo);
-=======
-            System.out.println("\n" + filePath);
-            while (file.getFilePointer() < file.length()) {
-                byte[] temp = LZW.decodifica(conteudo);
-                for (byte b : temp) {
-                    System.out.print(b);
-                }
-
-            }
-            System.out.println();
-            System.out.println();
->>>>>>> 915e09d5c53fd55f3b6486fd04bb431f6bd15661
             file.close();
             return LZW.decodifica(conteudo);
         } catch (Exception e) {
@@ -94,21 +80,8 @@ public class LZWController {
             
             byte[] conteudo = new byte[(int) fileOut.length()];
             fileOut.read(conteudo);
-<<<<<<< HEAD
 
             System.out.println("Original");
-/*             for(byte b : conteudo) {
-                System.out.print(b);
-=======
-            System.out.println("Arquivo original");
-            for (byte b : conteudo) {
-                fileOut.write(b);
->>>>>>> 915e09d5c53fd55f3b6486fd04bb431f6bd15661
-            }
-            System.out.println("\nDecodificado");
-            for(byte x : decoded) {
-                System.out.print(x);
-            } */
             boolean y = true;
             for(int x = 0; x < decoded.length; x++) {
                 if(decoded[x] != conteudo[x]) {
