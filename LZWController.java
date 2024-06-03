@@ -64,30 +64,34 @@ public class LZWController {
     public void decompressData(String filePath, int bytesByExecution) throws Exception {
         try {
             RandomAccessFile file = new RandomAccessFile(filePath, "rw");
-            byte[] conteudo = new byte[10];
+            byte[] conteudo = new byte[bytesByExecution];
             System.out.println("\n" + filePath);
             while (file.getFilePointer() < file.length()) {
                 file.read(conteudo);
-                for (byte b : conteudo) {
+                byte[] temp = LZW.decodifica(conteudo);
+                for (byte b : temp) {
                     System.out.print(b);
                 }
+
             }
             System.out.println();
             System.out.println();
             file.close();
         } catch (Exception e) {
-            throw new Exception("Erro ao abrir o arquivo para decodificação!");
+            e.printStackTrace();
         }
     }
 
     public void decompressData(String dirBackUp, String dirOut, int bytesByExecution) throws Exception {
         String[] files = (new File(dirBackUp)).list();
         for (String file : files) {
-            decompressData(dirBackUp + "/" + file, 10);
+            System.out.println("Arquivo descompactado");
+            decompressData(dirBackUp + "/" + file, bytesByExecution);
             RandomAccessFile fileOut = new RandomAccessFile(dirOut + "/" + file.substring(0, file.length()-4), "rw");
             
             byte[] conteudo = new byte[(int) fileOut.length()];
             fileOut.read(conteudo);
+            System.out.println("Arquivo original");
             for (byte b : conteudo) {
                 System.out.print(b);
             }
