@@ -2,6 +2,8 @@
 
 ## Relatório:
 
+No menu principal foram adicionadas mais duas opções: 4)Fazer BACKUP e 5)Restaurar BACKUP
+
 ### LZWController
 Nós criamos a classe LZWController para gerenciar a compressão e descompressão de arquivos, além de criar e restaurar backups. 
 * A função "makeBackupMenu" exibe um menu para o usuário escolher um backup para restaurar. Após a entrada do usuário, ele chama o método "decompressData" para descomprimir os arquivos do backup escolhido.
