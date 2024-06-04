@@ -39,6 +39,13 @@ public class LZWController {
             throw new Exception("Erro ao comprimir o conteudo de " + nome);
         }
         fileOutput.write(temp);
+
+        //Calculo percentual de compactação do LZW:
+        int fileLength = (int)fileInput.length();
+        int compressFileLength = (int)fileOutput.length();
+        float percentage = (100 - ((float)compressFileLength/(float)fileLength) * 100);
+        System.out.printf("\nFile length: %d \nCompress file length: %d \nPercentage: %.2f%%\n\n", fileLength, compressFileLength, percentage);
+
         fileInput.close();
         fileOutput.close();
     }
