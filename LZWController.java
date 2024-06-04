@@ -21,7 +21,8 @@ public class LZWController {
         this.dir = dir;
     }
 
-    private void readAndWrite(String nome, String dirOut) throws Exception {
+    
+    private float readAndWrite(String nome, String dirOut) throws Exception {
         RandomAccessFile fileInput = null, fileOutput = null;
         try {
             fileInput = new RandomAccessFile("dados/" + nome, "rw");
@@ -48,6 +49,8 @@ public class LZWController {
 
         fileInput.close();
         fileOutput.close();
+
+        return percentage;
     }
 
     /**
@@ -59,11 +62,33 @@ public class LZWController {
         String[] nomes = (new File("dados")).list();
         SimpleDateFormat simple = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
         String dirOut = simple.format(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+        
+        float[] percentages = new float[12];
+
+        int count = 0;
         for (String nome : nomes) {
             File file = new File(dir + "/" + dirOut);
             file.mkdir();
-            readAndWrite(nome, dirOut);
+            percentages[count++] = readAndWrite(nome, dirOut);
         }
+
+        System.out.printf("\nTotal percentage averege: %.2f%%\n", percentageAverege(percentages));
+    }
+
+    /**
+     * Função do tipo float que calcula a média do percentual de compactação
+     * @param percentages porcentagem de compactação de cada arquivo compactado
+     * @return média (em porcentagem)
+     */
+    private float percentageAverege(float[] percentages) {
+        int size = percentages.length;
+
+        float aux = 0;
+        for(int i = 0; i < size; i++) {
+            aux += percentages[i];
+        }
+
+        return (float)aux/size;
     }
 
     public byte[] decompressData(String filePath) throws Exception {
