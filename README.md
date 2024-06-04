@@ -1,16 +1,18 @@
-# TP02
+# TP03
 
-## Relatório:
+## Checklist:
 
-- [] A inclusão de um livro acrescenta os termos do seu título à lista invertida?
-- [] A alteração de um livro modifica a lista invertida removendo ou acrescentando termos do título?
-- [] A remoção de um livro gera a remoção dos termos do seu título na lista invertida?
-- [] Há uma busca por palavras que retorna os livros que possuam essas palavras?
-- [] Essa busca pode ser feita com mais de uma palavra?
-- [] As stop words foram removidas de todo o processo?
-- [] Que modificação, se alguma, você fez para além dos requisitos mínimos desta tarefa?
-- [] O trabalho está funcionando corretamente?
-- [] O trabalho está completo?
-- [] O trabalho é original e não a cópia de um trabalho de um colega?
+- [x] Há uma rotina de compactação usando o algoritmo LZW para fazer backup dos arquivos?
+- [x] Há uma rotina de descompactação usando o algoritmo LZW para recuperação dos arquivos?
+- [x] O usuário pode escolher a versão a recuperar?
+- [ ] Qual foi a taxa de compressão alcançada por esse backup? (Compare o tamanho dos arquivos compactados com os arquivos originais)
+- [x] O trabalho está funcionando corretamente?
+- [x] O trabalho está completo?
+- [x] O trabalho é original e não a cópia de um trabalho de um colega?
 
 ## Nomes
+
+- Guilherme Otávio de Oliveira
+- Gabriel Praes Bernardes Nunes
+- Ana Fernanda Souza Cancado
+- Júlia Pinheiro Roque
