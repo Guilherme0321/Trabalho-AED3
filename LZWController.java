@@ -51,8 +51,8 @@ public class LZWController {
     public void compressData() throws Exception {
         String[] nomes = (new File("dados")).list();
         SimpleDateFormat simple = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+        String dirOut = simple.format(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
         for (String nome : nomes) {
-            String dirOut = simple.format(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
             File file = new File(dir + "/" + dirOut);
             file.mkdir();
             readAndWrite(nome, dirOut);
