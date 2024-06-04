@@ -85,22 +85,20 @@ public class LZWController {
         }
     }
 
-    public void makeBackupMenu() throws Exception {
+    public void makeBackupMenu(Scanner sc) throws Exception {
         System.out.println("Choose a backup:");
         String[] dirList = (new File(dir)).list();
         for(int i = 0; i < dirList.length; i++) {
             System.out.println("    " + i + ": " + dirList[i]);
         }
         System.out.print("Resposta: ");
-        Scanner sc = new Scanner(System.in);
         int res = sc.nextInt();
         decompressData(dir + "/" + dirList[res], "dados", 10);
-        sc.close();
     }
 
     public static void main(String[] args) throws Exception {
         LZWController controller = new LZWController("backup");
-        controller.makeBackupMenu();
+       // controller.makeBackupMenu();
         //controller.compressData(10);
     }
 

@@ -56,10 +56,12 @@ public class Principal {
             lzw.compressData();
             break;
           case 5:
-            lzw.makeBackupMenu();
+            lzw.makeBackupMenu(console);
             break;
           case 9:
             preencherDados();
+            break;
+          case -1: // Tratamento de erro
             break;
           case 0:
             break;
