@@ -28,6 +28,8 @@ public class Principal {
         System.out.println("\n1) Categorias");
         System.out.println("2) Autores");
         System.out.println("3) Livros");
+        System.out.println("4) Fazer BACKUP");
+        System.out.println("5) Restaurar BACKUP");
         System.out.println("\n9) Reiniciar BD");
         System.out.println("\n0) Sair");
 
@@ -38,6 +40,8 @@ public class Principal {
           opcao = -1;
         }
 
+        LZWController lzw = new LZWController("backup");
+
         switch (opcao) {
           case 1:
             (new MenuCategorias()).menu();
@@ -47,6 +51,12 @@ public class Principal {
             break;
           case 3:
             (new MenuLivros()).menu();
+            break;
+          case 4:
+            lzw.compressData();
+            break;
+          case 5:
+            lzw.makeBackupMenu();
             break;
           case 9:
             preencherDados();

@@ -85,7 +85,7 @@ public class LZWController {
         }
     }
 
-    public void makeMenu() throws Exception {
+    public void makeBackupMenu() throws Exception {
         System.out.println("Choose a backup:");
         String[] dirList = (new File(dir)).list();
         for(int i = 0; i < dirList.length; i++) {
@@ -100,8 +100,9 @@ public class LZWController {
 
     public static void main(String[] args) throws Exception {
         LZWController controller = new LZWController("backup");
-        controller.makeMenu();
+        controller.makeBackupMenu();
         //controller.compressData(10);
     }
+
 
 }
