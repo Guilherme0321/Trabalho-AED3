@@ -1,11 +1,12 @@
 # TP04
 
 ## Relatório:
-Utilizamos dois métodos para a nossa cifragem:
-O primeiro é utilizando o método de substituição, que consiste na utilização de uma chave numérica. Essa chave será utilizada para definir o quanto cada caracter (ou no caso byte) "andará" para frente, sendo semelhante à uma cifra de Cesar. Logo, para cifrar, somaremos o valor da chave em cada posição do array de bytes, e para decifrar, iremos subtrair o valor da chave em cada posição.
+
+Utilizamos dois métodos para a nossa cifragem:\n
+O primeiro é utilizando o método de substituição, que consiste na utilização de uma chave numérica. Essa chave será utilizada para definir o quanto cada byte "andará" para frente, sendo semelhante à uma cifra de Cesar. Logo, para cifrar, somaremos o valor da chave em cada posição do array de bytes, e para decifrar, iremos subtrair o valor da chave em cada posição.
 
 O segundo é utilizando o método de transposição, que também consiste na utilização de uma chave numérica e, nesse caso, essa chave será utilizada na construção de um novo índice para cada byte. A lógica é:
-colocar o byte texto[i] na posição textoCriptografado[(i + chave) % texto.length()]. Essa lógica é feita para cada posição do array de bytes, e para decifrar, é utilizada a lógica reversa: texto[i] irá para posição textoCriptografado[(i - key + dados.length) % dados.length].
+colocar o byte texto[i] na posição textoCriptografado[novoIndice], sendo que "novoIndice" é criado com a seguinte lógica: int novoIndice = (i + chave) % texto.length(). Esse processo é feito para cada posição do array de bytes, e para decifrar, é utilizada a lógica reversa, onde a lógica do "novoIndice" será : int novoIndice = (i - key + dados.length) % dados.length.
 
 
 ## Checklist:
