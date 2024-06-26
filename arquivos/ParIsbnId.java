@@ -6,8 +6,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import cifras.Cifra;
-
 public class ParIsbnId implements aeds3.RegistroHashExtensivel<ParIsbnId> {
 
   private String isbn;
@@ -47,11 +45,10 @@ public class ParIsbnId implements aeds3.RegistroHashExtensivel<ParIsbnId> {
     DataOutputStream dos = new DataOutputStream(baos);
     dos.write(this.isbn.getBytes());
     dos.writeInt(this.id);
-    return Cifra.cifra(baos.toByteArray());
+    return baos.toByteArray();
   }
 
   public void fromByteArray(byte[] ba) throws IOException {
-    ba = Cifra.decifra(ba);
     ByteArrayInputStream bais = new ByteArrayInputStream(ba);
     DataInputStream dis = new DataInputStream(bais);
     byte[] b = new byte[13];

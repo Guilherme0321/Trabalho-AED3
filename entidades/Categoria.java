@@ -6,12 +6,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 import aeds3.Registro;
-import cifras.Cifra;
 
 public class Categoria implements Registro {
 
   private int ID;
   private String nome;
+  private static final byte SUBSTITUTION_KEY = 5; // chave substituicao
+  private static final int TRANSPOSITION_KEY = 3; // chave transpo
 
   public Categoria() {
     this(-1, "");
@@ -47,16 +48,64 @@ public class Categoria implements Registro {
     DataOutputStream dos = new DataOutputStream(ba_out);
     dos.writeInt(this.ID);
     dos.writeUTF(this.nome);
-    return Cifra.cifra(ba_out.toByteArray());
-  }
+    byte[] dados = ba_out.toByteArray();
+    byte[] dadosCifrados = cifrar(dados, SUBSTITUTION_KEY, TRANSPOSITION_KEY);
+    return dadosCifrados;
+}
 
-  public void fromByteArray(byte[] ba) throws Exception {
-    ba = Cifra.cifra(ba);
-    ByteArrayInputStream ba_in = new ByteArrayInputStream(ba);
+public void fromByteArray(byte[] ba) throws Exception {
+    byte[] dadosDecifrados = decifrar(ba, SUBSTITUTION_KEY, TRANSPOSITION_KEY);
+    ByteArrayInputStream ba_in = new ByteArrayInputStream(dadosDecifrados);
     DataInputStream dis = new DataInputStream(ba_in);
     this.ID = dis.readInt();
     this.nome = dis.readUTF();
-  }
+}
+
+private byte[] cifrar(byte[] dados, byte substitutionKey, int transpositionKey) {
+    byte[] substituidos = substituir(dados, substitutionKey);
+    byte[] transpostos = transpor(substituidos, transpositionKey);
+    return transpostos;
+}
+
+private byte[] decifrar(byte[] dados, byte substitutionKey, int transpositionKey) {
+    byte[] transpostos = destranspor(dados, transpositionKey);
+    byte[] substituidos = desubstituir(transpostos, substitutionKey);
+    return substituidos;
+}
+
+private byte[] substituir(byte[] dados, byte key) {
+    byte[] resultado = new byte[dados.length];
+    for (int i = 0; i < dados.length; i++) {
+        resultado[i] = (byte)(dados[i] + key);
+    }
+    return resultado;
+}
+
+private byte[] desubstituir(byte[] dados, byte key) {
+    byte[] resultado = new byte[dados.length];
+    for (int i = 0; i < dados.length; i++) {
+        resultado[i] = (byte)(dados[i] - key);
+    }
+    return resultado;
+}
+
+private byte[] transpor(byte[] dados, int key) {
+    byte[] resultado = new byte[dados.length];
+    for (int i = 0; i < dados.length; i++) {
+        int novoIndice = (i + key) % dados.length;
+        resultado[novoIndice] = dados[i];
+    }
+    return resultado;
+}
+
+private byte[] destranspor(byte[] dados, int key) {
+    byte[] resultado = new byte[dados.length];
+    for (int i = 0; i < dados.length; i++) {
+        int novoIndice = (i - key + dados.length) % dados.length;
+        resultado[novoIndice] = dados[i];
+    }
+    return resultado;
+}
 
   public String toString() {
     return "ID: " + this.ID +

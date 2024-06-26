@@ -7,7 +7,6 @@ import java.io.DataOutputStream;
 import java.text.NumberFormat;
 
 import aeds3.Registro;
-import cifras.Cifra;
 
 public class Livro implements Registro {
 
@@ -16,6 +15,8 @@ public class Livro implements Registro {
   private String titulo;
   private float preco;
   private int idCategoria;
+  private static final byte SUBSTITUTION_KEY = 5; // chave substituicao
+  private static final int TRANSPOSITION_KEY = 3; // chave transpo
 
   public Livro() {
     this(-1, "", "", 0F, -1);
@@ -77,24 +78,70 @@ public class Livro implements Registro {
     ByteArrayOutputStream ba_out = new ByteArrayOutputStream();
     DataOutputStream dos = new DataOutputStream(ba_out);
     dos.writeInt(this.ID);
-    dos.write(this.isbn.getBytes());
+    dos.writeUTF(this.isbn);
     dos.writeUTF(this.titulo);
     dos.writeFloat(this.preco);
     dos.writeInt(this.idCategoria);
-    return Cifra.cifra(ba_out.toByteArray());
+    byte[] dados = ba_out.toByteArray();
+    byte[] dadosCifrados = cifrar(dados, SUBSTITUTION_KEY, TRANSPOSITION_KEY);
+    return dadosCifrados;
   }
 
   public void fromByteArray(byte[] ba) throws Exception {
-    ba = Cifra.decifra(ba);
-    byte[] straux = new byte[13];
-    ByteArrayInputStream ba_in = new ByteArrayInputStream(ba);
+    byte[] dadosDecifrados = decifrar(ba, SUBSTITUTION_KEY, TRANSPOSITION_KEY);
+    ByteArrayInputStream ba_in = new ByteArrayInputStream(dadosDecifrados);
     DataInputStream dis = new DataInputStream(ba_in);
     this.ID = dis.readInt();
-    dis.read(straux);
-    this.isbn = new String(straux);
+    this.isbn = dis.readUTF();
     this.titulo = dis.readUTF();
     this.preco = dis.readFloat();
     this.idCategoria = dis.readInt();
+  }
+
+  private byte[] cifrar(byte[] dados, byte substitutionKey, int transpositionKey) {
+    byte[] substituidos = substituir(dados, substitutionKey);
+    byte[] transpostos = transpor(substituidos, transpositionKey);
+    return transpostos;
+  }
+
+  private byte[] decifrar(byte[] dados, byte substitutionKey, int transpositionKey) {
+    byte[] transpostos = destranspor(dados, transpositionKey);
+    byte[] substituidos = desubstituir(transpostos, substitutionKey);
+    return substituidos;
+  }
+
+  private byte[] substituir(byte[] dados, byte key) {
+    byte[] resultado = new byte[dados.length];
+    for (int i = 0; i < dados.length; i++) {
+      resultado[i] = (byte) (dados[i] + key);
+    }
+    return resultado;
+  }
+
+  private byte[] desubstituir(byte[] dados, byte key) {
+    byte[] resultado = new byte[dados.length];
+    for (int i = 0; i < dados.length; i++) {
+      resultado[i] = (byte) (dados[i] - key);
+    }
+    return resultado;
+  }
+
+  private byte[] transpor(byte[] dados, int key) {
+    byte[] resultado = new byte[dados.length];
+    for (int i = 0; i < dados.length; i++) {
+      int novoIndice = (i + key) % dados.length;
+      resultado[novoIndice] = dados[i];
+    }
+    return resultado;
+  }
+
+  private byte[] destranspor(byte[] dados, int key) {
+    byte[] resultado = new byte[dados.length];
+    for (int i = 0; i < dados.length; i++) {
+      int novoIndice = (i - key + dados.length) % dados.length;
+      resultado[novoIndice] = dados[i];
+    }
+    return resultado;
   }
 
   public String toString() {

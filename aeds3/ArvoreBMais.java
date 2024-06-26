@@ -15,9 +15,6 @@ package aeds3;
 
 import java.io.*;
 import java.util.ArrayList;
-
-import cifras.Cifra;
-
 import java.lang.reflect.Constructor;
 
 // Esta versão da árvore funciona apenas como um conjunto de par de chaves.
@@ -111,12 +108,11 @@ public class ArvoreBMais<T extends RegistroArvoreBMais<T>> {
             out.writeLong(this.proxima);
 
             // Retorna o vetor de bytes que representa a página
-            return Cifra.cifra(ba.toByteArray());
+            return ba.toByteArray();
         }
 
         // Reconstrói uma página a partir de um vetor de bytes lido no arquivo
         public void fromByteArray(byte[] buffer) throws Exception {
-            buffer = Cifra.decifra(buffer);
 
             // Usa um fluxo de bytes para leitura dos atributos
             ByteArrayInputStream ba = new ByteArrayInputStream(buffer);

@@ -128,4 +128,11 @@ public class LZWController {
         decompressData(dir + "/" + dirList[res], "dados", 10);
     }
 
+    public static void main(String[] args) throws Exception {
+        LZWController controller = new LZWController("backup");
+       // controller.makeBackupMenu();
+        //controller.compressData(10);
+    }
+
+
 }
