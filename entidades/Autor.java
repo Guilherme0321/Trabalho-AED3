@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 import aeds3.Registro;
+import cifras.Cifra;
 
 public class Autor implements Registro {
 
@@ -46,10 +47,11 @@ public class Autor implements Registro {
     DataOutputStream dos = new DataOutputStream(ba_out);
     dos.writeInt(this.ID);
     dos.writeUTF(this.nome);
-    return ba_out.toByteArray();
+    return Cifra.cifra(ba_out.toByteArray());
   }
 
   public void fromByteArray(byte[] ba) throws Exception {
+    ba = Cifra.decifra(ba);
     ByteArrayInputStream ba_in = new ByteArrayInputStream(ba);
     DataInputStream dis = new DataInputStream(ba_in);
     this.ID = dis.readInt();

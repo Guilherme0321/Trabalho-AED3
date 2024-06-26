@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.text.NumberFormat;
 
 import aeds3.Registro;
+import cifras.Cifra;
 
 public class Livro implements Registro {
 
@@ -80,10 +81,11 @@ public class Livro implements Registro {
     dos.writeUTF(this.titulo);
     dos.writeFloat(this.preco);
     dos.writeInt(this.idCategoria);
-    return ba_out.toByteArray();
+    return Cifra.cifra(ba_out.toByteArray());
   }
 
   public void fromByteArray(byte[] ba) throws Exception {
+    ba = Cifra.decifra(ba);
     byte[] straux = new byte[13];
     ByteArrayInputStream ba_in = new ByteArrayInputStream(ba);
     DataInputStream dis = new DataInputStream(ba_in);

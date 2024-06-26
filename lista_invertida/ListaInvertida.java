@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
+import cifras.Cifra;
+
 public class ListaInvertida {
 
   String nomeArquivoDicionario;
@@ -62,11 +64,11 @@ public class ListaInvertida {
         i++;
       }
       dos.writeLong(proximo);
-      return baos.toByteArray();
+      return Cifra.cifra(baos.toByteArray());
     }
 
     public void fromByteArray(byte[] ba) throws IOException {
-      ByteArrayInputStream bais = new ByteArrayInputStream(ba);
+      ByteArrayInputStream bais = new ByteArrayInputStream(Cifra.decifra(ba));
       DataInputStream dis = new DataInputStream(bais);
       quantidade = dis.readShort();
       int i = 0;
