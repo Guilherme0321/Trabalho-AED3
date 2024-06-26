@@ -1,22 +1,19 @@
-# TP03
+# TP04
 
 ## Relatório:
 
-No menu principal foram adicionadas mais duas opções: 4)Fazer BACKUP e 5)Restaurar BACKUP
+Utilizamos dois métodos para a nossa cifragem:
 
-### LZWController
-Nós criamos a classe LZWController para gerenciar a compressão e descompressão de arquivos, além de criar e restaurar backups. 
-* A função "makeBackupMenu" exibe um menu para o usuário escolher um backup para restaurar. Após a entrada do usuário, ele chama o método "decompressData" para descomprimir os arquivos do backup escolhido.
-* O método "compressData" lista todos os arquivos da pasta dados, cria uma nova pasta de backup com a data e hora, e chama "readAndWrite" para comprimir e armazenar cada arquivo.
-* A função "readAndWrite" lê um arquivo, comprime seu conteúdo usando LZW e escreve o arquivo comprimido em um diretório de backup especificado.
-* A primeira função "decompressData" descomprime um arquivo específico eretorna seu conteúdo descomprimido. Já a segunda função "decompressData" descomprime todos os arquivos que estão no backup e escreve o conteúdo descomprimido.
+O primeiro é utilizando o método de substituição, que consiste na utilização de uma chave numérica. Essa chave será utilizada para definir o quanto cada byte "andará" para frente, sendo semelhante à uma cifra de Cesar. Logo, para cifrar, somaremos o valor da chave em cada posição do array de bytes, e para decifrar, iremos subtrair o valor da chave em cada posição.
+
+O segundo é utilizando o método de transposição, que também consiste na utilização de uma chave numérica e, nesse caso, essa chave será utilizada na construção de um novo índice para cada byte. A lógica é:
+colocar o byte texto[i] na posição textoCriptografado[novoIndice], sendo que "novoIndice" é criado com a seguinte lógica: int novoIndice = (i + chave) % texto.length(). Esse processo é feito para cada posição do array de bytes, e para decifrar, é utilizada a lógica reversa, onde a lógica do "novoIndice" será : int novoIndice = (i - key + dados.length) % dados.length.
+
 
 ## Checklist:
 
-- [x] Há uma rotina de compactação usando o algoritmo LZW para fazer backup dos arquivos?
-- [x] Há uma rotina de descompactação usando o algoritmo LZW para recuperação dos arquivos?
-- [x] O usuário pode escolher a versão a recuperar?
-- [ ] Qual foi a taxa de compressão alcançada por esse backup? (Compare o tamanho dos arquivos compactados com os arquivos originais)
+- [x] Há uma função de cifragem em todas as classes de entidades, envolvendo pelo menos duas operações diferentes e usando uma chave criptográfica?
+- [x] Uma das operações de cifragem é baseada na substituição e a outra na transposição?
 - [x] O trabalho está funcionando corretamente?
 - [x] O trabalho está completo?
 - [x] O trabalho é original e não a cópia de um trabalho de um colega?
