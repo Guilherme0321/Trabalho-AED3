@@ -2,7 +2,8 @@
 
 ## Relatório:
 
-Utilizamos dois métodos para a nossa cifragem:\n
+Utilizamos dois métodos para a nossa cifragem:
+
 O primeiro é utilizando o método de substituição, que consiste na utilização de uma chave numérica. Essa chave será utilizada para definir o quanto cada byte "andará" para frente, sendo semelhante à uma cifra de Cesar. Logo, para cifrar, somaremos o valor da chave em cada posição do array de bytes, e para decifrar, iremos subtrair o valor da chave em cada posição.
 
 O segundo é utilizando o método de transposição, que também consiste na utilização de uma chave numérica e, nesse caso, essa chave será utilizada na construção de um novo índice para cada byte. A lógica é:
